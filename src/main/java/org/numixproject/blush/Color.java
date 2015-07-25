@@ -4,7 +4,7 @@ package org.numixproject.blush;
  * Representation of color.
  * Color instance can not be changed after it is created.
  */
-public final class Color {
+public final class Color implements ColorModel {
 
     /**
      * The color white.  In the default sRGB space.
@@ -271,6 +271,47 @@ public final class Color {
     @Override
     public String toString() {
         return getClass().getName() + "[r=" + getRed() + ",g=" + getGreen() + ",b=" + getBlue() + "]";
+    }
+
+    /**
+     *
+     * @param clazz class implementation of Transform interface.
+     * @return New transformed color using Class<? extends Transform>
+     * @throws RuntimeException if not able to initialize the Transform instance.
+     */
+    public <T> Color  transform(Class<? extends Transform<T>> clazz, T t)  {
+        try {
+            Transform<T> transform = clazz.newInstance();
+            return transform.transform(this, t);
+        } catch (InstantiationException e) { // decide on if
+            e.printStackTrace();
+            throw new RuntimeException("Unable to create instance of class");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to create instance of class");
+        }
+
+    }
+
+
+    /**
+     *
+     * @param clazz class implementation of Converter interface.
+     * @return New transformed color using Class<? extends Converter>
+     * @throws RuntimeException if not able to initialize the Transform instance.
+     */
+    public <T extends ColorModel> T convert(Class<? extends Converter<T>> clazz)  {
+        try {
+            Converter<T> converter= clazz.newInstance();
+            return converter.convert(this);
+        } catch (InstantiationException e) { // decide on if
+            e.printStackTrace();
+            throw new RuntimeException("Unable to create instance of class");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to create instance of class");
+        }
+
     }
 
     /**
