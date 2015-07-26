@@ -117,6 +117,14 @@ public final class Color implements ColorModel {
     }
 
     /**
+     * Create color from Color Model.
+     * @param colorModel
+     */
+    public Color(ColorModel colorModel) {
+        this(colorModel.getRed(), colorModel.getGreen(), colorModel.getBlue(), colorModel.getAlpha());
+    }
+
+    /**
      * Creates an sRGB color with the specified red, green, blue, and alpha
      * values in the range (0 - 255).
      *
@@ -293,6 +301,17 @@ public final class Color implements ColorModel {
 
     }
 
+    /**
+     * Tansform this color using value as a parameter.
+     * @param transform
+     * @param value
+
+     * @return Transformed color
+     */
+
+    public <T> Color transform(Transform<T> transform, T value) {
+        return transform.transform(this, value);
+    }
 
     /**
      *
@@ -312,6 +331,28 @@ public final class Color implements ColorModel {
             throw new RuntimeException("Unable to create instance of class");
         }
 
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj instanceof Color) {
+            return this.value == ((Color) obj).value;
+        } else return false;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
+    }
+    /**
+     * Convert this color to a new color model T.
+     * @param converter Implementation of convertor.
+     * @param <T> new Color model
+     * @return New color model.
+     */
+    public <T extends ColorModel> T convert(Converter<T> converter) {
+        return converter.convert(this);
     }
 
     /**
